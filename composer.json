@@ -1,5 +1,5 @@
 {
-    "name": "tlannom-nni/guzzle-toggl",
+    "name": "networkninja/guzzle-toggl",
     "type": "library",
     "description": "Toggl API client written on top of Guzzle PHP.",
     "keywords": ["toggl", "ajt", "api", "guzzle"],
