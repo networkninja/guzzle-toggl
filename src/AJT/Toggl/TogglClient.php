@@ -2,12 +2,10 @@
 
 namespace AJT\Toggl;
 
-use Guzzle\Service\Loader\JsonLoader;
 use GuzzleHttp\Client;
 use GuzzleHttp\Command\Guzzle\Description;
 use GuzzleHttp\Command\Guzzle\GuzzleClient;
 use GuzzleHttp\Command\Result;
-use Symfony\Component\Config\FileLocator;
 
 /**
  * A TogglClient
@@ -41,9 +39,21 @@ class TogglClient extends GuzzleClient
 
     protected static function getAPIDescriptionByJsonFile($file): Description
     {
-        $locator = new FileLocator([__DIR__]);
-        $jsonLoader = new JsonLoader($locator);
-        return new Description($jsonLoader->load($locator->locate($file)));
+        $path = __DIR__ . DIRECTORY_SEPARATOR . $file;
+
+        if (!is_file($path)) {
+            throw new \InvalidArgumentException(sprintf('Service description "%s" not found.', $file));
+        }
+
+        $data = json_decode((string) file_get_contents($path), true);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \RuntimeException(
+                sprintf('Error parsing JSON in "%s" - %s', $file, json_last_error_msg())
+            );
+        }
+
+        return new Description($data);
     }
 
     protected static function getClientConfig($config): array
